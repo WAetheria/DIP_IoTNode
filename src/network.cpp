@@ -1,0 +1,50 @@
+#include "network.h"
+
+bool setupWiFi(char const *manager_ssid){
+	return setupWiFi(manager_ssid, false);
+}
+
+bool setupWiFi(char const *manager_ssid, bool reset)
+{
+    WiFi.mode(WIFI_STA);                      // Default WiFi mode: Station
+	WiFiManager wm;                           // WiFiManager object 
+
+	if (reset){wm.resetSettings();}           // Reset credentials during testing
+
+	bool res;
+	res = wm.autoConnect(manager_ssid);
+
+	if (!res){
+		Serial.print("Failed to connect\n");
+	} else{
+		Serial.print("WiFi connected\n");
+	}
+
+	return res;                               // Returns whether the connection failed
+}
+
+void connectToWifi(const char* ssid, const char* password){
+	WiFi.begin(ssid, password);               // Initiate the connection process
+
+	Serial.print("Connecting to WiFi");       
+	while (WiFi.status() != WL_CONNECTED){
+	delay(250);
+	Serial.print(".");
+	}
+
+    Serial.print("Done\n");                   // Show successful connection and local IP address
+}
+
+void postJSON(const String& payload, HTTPClient& http){
+    // http.addHeader("Authorization", "Bearer nOuWrbjKI0faqVA4ByyacBN0lOI+UzADIixtPUPvEftYUsmLlISrP4Dl2gXfmINCOexJ4Yjnwofi3SJwcp5oMQ==");
+	http.addHeader("Content-Type", "application/json");
+	
+	int httpResponseCode = http.POST(payload);
+
+	Serial.print("HTTP Response Code: ");
+	Serial.println(httpResponseCode);
+
+	String httpResponse = http.getString();
+    Serial.print("HTTP Response: ");
+	Serial.println(httpResponse);
+}
