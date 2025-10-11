@@ -6,6 +6,8 @@
 #include <WiFiManager.h>
 #include <HTTPClient.h>
 
+extern const char* serverURL;
+
 bool setupWiFi(char const* manager_ssid);
 bool setupWiFi(char const* manager_ssid, bool reset);
 
