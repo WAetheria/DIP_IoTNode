@@ -36,7 +36,6 @@ void connectToWifi(const char* ssid, const char* password){
 }
 
 void postJSON(const String& payload, HTTPClient& http){
-    // http.addHeader("Authorization", "Bearer nOuWrbjKI0faqVA4ByyacBN0lOI+UzADIixtPUPvEftYUsmLlISrP4Dl2gXfmINCOexJ4Yjnwofi3SJwcp5oMQ==");
 	http.addHeader("Content-Type", "application/json");
 	
 	int httpResponseCode = http.POST(payload);
@@ -47,4 +46,17 @@ void postJSON(const String& payload, HTTPClient& http){
 	String httpResponse = http.getString();
     Serial.print("HTTP Response: ");
 	Serial.println(httpResponse);
+}
+
+String getJSON(HTTPClient &http){
+	int httpResponseCode = http.GET();
+
+	Serial.print("HTTP Response Code: ");
+	Serial.println(httpResponseCode);
+
+	String httpResponse = http.getString();
+    Serial.print("HTTP Response: ");
+	Serial.println(httpResponse);
+
+	return httpResponse;
 }
