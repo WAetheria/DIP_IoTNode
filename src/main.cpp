@@ -8,7 +8,7 @@
 
 #include "env.h"     // NOTE: CREATE + CONFIGURE BEFORE USE
 
-#define GAS_BUILD    // VERY IMPORTANT: CHECK BEFORE BUILDING/UPLOADING
+#define PIR_BUILD    // VERY IMPORTANT: CHECK BEFORE BUILDING/UPLOADING
 #define DEBUG false
 
 // BUILD DEFINITIONS
@@ -83,95 +83,43 @@
 #endif
 
 void setup(){
-    #if DEBUG == true
-        Serial.begin(115200);
-    #endif
+    Serial.begin(115200);
 
-    const char* managerSSID = "IoT Node Setup";
+    const char* managerSSID = "IoT Device Setup";
     bool resetWiFiSettings  = false;
 
 	setupWiFi(managerSSID, resetWiFiSettings);
 }
 
+#ifdef PIR_BUILD
+/*======================================================================================*/
 void loop(){
-    // SENSOR HANDLING
-    #ifdef PIR_BUILD
-        bool inKitchen = (bool)pir.readInput();
-        bool stoveIsOn = (bool)stove.readInput();
+    // Sensor Handling
+	bool inKitchen = (bool)pir.readInput();
+	bool stoveIsOn = (bool)stove.readInput();
 
-        if (inKitchen){pirTimer.resetTimer();}
+	if (inKitchen){pirTimer.resetTimer();}
 
-        (stoveIsOn && pirTimer.timedOut()) ? buzzer.turnOn() : buzzer.turnOff();
-        (!pirTimer.timedOut()) ? led.turnOn() : led.turnOff();
+	(stoveIsOn && pirTimer.timedOut()) ? buzzer.turnOn() : buzzer.turnOff();
+	(!pirTimer.timedOut()) ? led.turnOn() : led.turnOff();
 
-        #if DEBUG == true
-            Serial.print("inKitchen: ");
-            Serial.println(inKitchen);
-            Serial.print("stoveIsOn: ");
-            Serial.println(stoveIsOn);
-        #endif
-    #endif
-    #ifdef GAS_BUILD
-        int mq135Reading = gas1.readInput();
-        int mq2Reading   = gas2.readInput();
+	#if DEBUG == true
+		Serial.print("inKitchen: ");
+		Serial.println(inKitchen);
+		Serial.print("stoveIsOn: ");
+		Serial.println(stoveIsOn);
+	#endif
 
-        (mq135Reading >= GAS_THRESHOLD) ? led1.turnOn() : led1.turnOff();
-        (mq2Reading   >= GAS_THRESHOLD) ? led2.turnOn() : led2.turnOff();
+	// JSON Handling
+	JsonDocument doc;
+	
+	doc["in_kitchen"] = inKitchen;
+	doc["stove_on"]   = stoveIsOn;
 
-        if (mq135Reading >= GAS_THRESHOLD || mq2Reading >= GAS_THRESHOLD){gasTimer.resetTimer();}
-        (!gasTimer.timedOut()) ? fan.turnOn() : fan.turnOff();
-
-        #if DEBUG == true
-            Serial.print("mq135Reading: ");
-            Serial.println(mq135Reading);
-            Serial.print("mq2Reading: ");
-            Serial.println(mq2Reading);
-        #endif
-    #endif
-    #ifdef LOAD_BUILD
-        unsigned long weight;
-
-        if(load.isReady()){
-            weight = load.getReading();
-            Serial.print("Load Reading (Raw): ");
-            Serial.println(weight);
-        } else {
-            Serial.print("HX711 Not Found.\n");
-        }
-    #endif
-    #ifdef PLANT_BUILD
-        int waterLevel = water.readInput();
-
-        (waterLevel <= WATER_THRESHOLD) ? pump.turnOn() : pump.turnOff();
-
-        #if DEBUG == true
-            Serial.print("Water Level: ");
-            Serial.println(waterLevel);
-        #endif
-    #endif
-
-    // JSON HANDLING
-    JsonDocument doc;
-
-    #ifdef PIR_BUILD
-        doc["in_kitchen"] = inKitchen;
-        doc["stove_on"]   = stoveIsOn;
-    #endif
-    #ifdef GAS_BUILD
-        doc["air_purity"]             = 100 * float(mq135Reading/4095);
-        doc["volatile_concentration"] = 100 * float(mq2Reading  /4095);
-    #endif
-    #ifdef LOAD_BUILD
-        doc["weight"] = weight;
-    #endif
-    #ifdef PLANT_BUILD
-        doc["water_level"] = 100 * float(waterLevel/4095);
-    #endif
-
-    char payload[256];
+	char payload[256];
 	serializeJson(doc, payload);
 
-    // HTTP HANDLING
+	// HTTP Handling
     static HTTPClient http;
 
 	if (!http.connected()){
@@ -182,16 +130,112 @@ void loop(){
 	postJSON(payload, http);
 
 	#if DEBUG == true
-	    delay(30000); // Artificial delay for debugging
+	delay(30000); // An added delay so the network doesn't get overloaded
 	#endif
 }
+/*======================================================================================*/
+#endif
+
+#ifdef GAS_BUILD
+/*======================================================================================*/
+void loop(){
+    // Sensor Handling
+    int mq135Reading;
+    int mq2Reading;
+
+    (gas1.readInput() >= GAS_THRESHOLD) ? led1.turnOn() : led1.turnOff();
+	mq135Reading = gas1.readInput();
+
+	(gas2.readInput() >= GAS_THRESHOLD) ? led2.turnOn() : led2.turnOff();
+	mq2Reading = gas2.readInput();
+
+    if (mq135Reading >= GAS_THRESHOLD || mq2Reading >= GAS_THRESHOLD){gasTimer.resetTimer();}
+    (!gasTimer.timedOut()) ? fan.turnOn() : fan.turnOff();
+
+	// JSON Handling
+	JsonDocument doc;
+	
+	doc["air_purity"]             = 100 * float(mq135Reading/4095);
+    doc["volatile_concentration"] = 100 * float(mq2Reading  /4095);
+
+	char payload[256];
+	serializeJson(doc, payload);
+
+	// HTTP Handling
+    static HTTPClient http;
+
+	if (!http.connected()){
+		http.begin(serverURL);
+		http.setReuse(true);
+	}
+
+	postJSON(payload, http);
+
+	#if DEBUG == true
+	delay(30000); // An added delay so the network doesn't get overloaded
+	#endif
+}
+/*======================================================================================*/
+#endif
+
+#ifdef LOAD_BUILD
+/*======================================================================================*/
+void loop(){
+    if(load.isReady()){
+        Serial.print("Load Reading (Raw): ");
+        Serial.println(load.getReading());
+    } else {
+        Serial.print("HX711 Not Found.\n");
+    }
+}
+/*======================================================================================*/
+#endif
+
+#ifdef PLANT_BUILD
+/*======================================================================================*/
+void loop(){
+    // Sensor Handling
+    int waterLevel = water.readInput();
+
+    (waterLevel <= WATER_THRESHOLD) ? pump.turnOn() : pump.turnOff();
+	#if DEBUG == true
+		Serial.print("Water Level: ");
+		Serial.println(waterLevel);
+	#endif
+
+    // JSON Handling
+	JsonDocument doc;
+	
+	doc["Water Level"] = waterLevel;
+
+	char payload[256];
+	serializeJson(doc, payload);
+
+	// HTTP Handling
+    static HTTPClient http;
+
+	if (!http.connected()){
+		http.begin(serverURL);
+		http.setReuse(true);
+	}
+
+	postJSON(payload, http);
+
+	#if DEBUG == true
+	delay(30000); // An added delay so the network doesn't get overloaded
+	#endif
+}
+/*======================================================================================*/
+#endif
 
 #ifdef TEST_BUILD
+/*======================================================================================*/
 void setup(){
-    Serial.begin(115200);
+	Serial.begin(115200);
 }
 
 void loop(){
-    
+
 }
+/*======================================================================================*/
 #endif
