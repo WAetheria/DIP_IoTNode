@@ -95,6 +95,9 @@
 #ifdef PLANT_BUILD
     const char* serverURL = PLANT_ENDPOINT_URL;
 #endif
+#ifdef LIVROOM_BUILD
+    const char* serverURL = LIVROOM_ENDPOINT_URL;
+#endif
 
 #ifndef TEST_BUILD
 void setup(){
