@@ -8,7 +8,7 @@
 
 #include "env.h"     // NOTE: CREATE + CONFIGURE BEFORE USE
 
-#define PIR_BUILD    // VERY IMPORTANT: CHECK BEFORE BUILDING/UPLOADING
+#define LIVROOM_BUILD    // VERY IMPORTANT: CHECK BEFORE BUILDING/UPLOADING
 #define DEBUG false
 
 // BUILD DEFINITIONS
@@ -31,15 +31,24 @@
     #define FAN_TIMEOUT      15000
 #endif
 #ifdef LOAD_BUILD
-    #define SCK_PIN   16
-    #define DOUT_PIN  17
-    #define AMP_GAIN  128
+    #define SCK_PIN  16
+    #define DOUT_PIN 17
+    #define AMP_GAIN 128
 #endif
 #ifdef PLANT_BUILD
-    #define WATER_SENSOR     16  // Change Later
-    #define WATER_PUMP       26  // Change Later
+    #define WATER_SENSOR    16 
+    #define WATER_PUMP      26 
 
-    #define WATER_THRESHOLD  0  // Change Later
+    #define WATER_THRESHOLD 0  
+#endif
+#ifdef LIVROOM_BUILD
+    #define LED1_PIN              -1
+    #define LED2_PIN              -1
+    #define LED3_PIN              -1
+
+    #define TEMPERATURE_THRESHOLD  0
+    #define HUMIDITY_THRESHOLD     0
+    #define ILLUMINATION_THRESHOLD 0
 #endif
 
 // BUILD-SPECIFIC OBJECTS
@@ -67,6 +76,11 @@
     Device water = Device(WATER_SENSOR, DeviceMode::ANALOG_INPUT);
     Device pump  = Device(WATER_PUMP  , DeviceMode::DIGITAL_OUTPUT);
 #endif
+#ifdef LIVROOM_BUILD
+    Device led1 = Device(LED1_PIN, DeviceMode::DIGITAL_OUTPUT);
+    Device led2 = Device(LED2_PIN, DeviceMode::DIGITAL_OUTPUT);
+    Device led3 = Device(LED3_PIN, DeviceMode::DIGITAL_OUTPUT);
+#endif
 
 // ENDPOINT URL
 #ifdef PIR_BUILD
@@ -82,14 +96,16 @@
     const char* serverURL = PLANT_ENDPOINT_URL;
 #endif
 
+#ifndef TEST_BUILD
 void setup(){
     Serial.begin(115200);
 
     const char* managerSSID = "IoT Device Setup";
     bool resetWiFiSettings  = false;
 
-	setupWiFi(managerSSID, resetWiFiSettings);
+    setupWiFi(managerSSID, resetWiFiSettings);
 }
+#endif
 
 #ifdef PIR_BUILD
 /*======================================================================================*/
@@ -226,6 +242,34 @@ void loop(){
 	#endif
 }
 /*======================================================================================*/
+#endif
+
+#ifdef LIVROOM_BUILD
+void loop(){
+    static HTTPClient http;
+    JsonDocument doc;
+
+	if (!http.connected()){
+		http.begin(serverURL);
+		http.setReuse(true);
+	}
+
+    String response = getJSON(http);
+
+    deserializeJson(doc, response);
+
+    float temperature = doc["temperature"];
+    float humidity    = doc["humidity"];
+    int illumination  = doc["illumination"];
+
+    (temperature >= TEMPERATURE_THRESHOLD)   ? led1.turnOn() : led1.turnOff();
+    (humidity >= HUMIDITY_THRESHOLD)         ? led2.turnOn() : led2.turnOff();
+    (illumination >= ILLUMINATION_THRESHOLD) ? led3.turnOn() : led3.turnOff();
+
+	#if DEBUG == true
+	delay(30000); // An added delay so the network doesn't get overloaded
+	#endif
+}
 #endif
 
 #ifdef TEST_BUILD
