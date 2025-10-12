@@ -10,6 +10,9 @@ bool setupWiFi(char const *manager_ssid, bool reset)
 	WiFiManager wm;                           // WiFiManager object 
 
 	if (reset){wm.resetSettings();}           // Reset credentials during testing
+	wm.setSaveConnectTimeout(10);
+	wm.setConnectTimeout(10);
+	wm.setConnectRetries(3);
 
 	bool res;
 	res = wm.autoConnect(manager_ssid);
