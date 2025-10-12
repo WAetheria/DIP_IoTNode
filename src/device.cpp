@@ -16,6 +16,8 @@ Device::Device(int gpioPin, DeviceMode mode){
     } else {
         pinMode(gpioPin, OUTPUT);
     }
+
+    if (gpioPin == -1){this->mode = DeviceMode::INACTIVE;}
 }
 
 Device::~Device(){}
