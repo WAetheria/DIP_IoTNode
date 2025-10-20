@@ -28,11 +28,7 @@ const char* serverURL = PIR_ENDPOINT_URL;
 
 void setup(){
     Serial.begin(115200);
-
-    const char* managerSSID = "IoT Device Setup";
-    bool resetWiFiSettings  = false;
-
-    setupWiFi(managerSSID, resetWiFiSettings);
+    setupWiFi();
 }
 
 void loop(){

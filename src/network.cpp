@@ -1,7 +1,12 @@
 #include "network.h"
 
-bool setupWiFi(char const *manager_ssid){
-	return setupWiFi(manager_ssid, false);
+bool setupWiFi(){
+	return setupWiFi("IoT Device Setup", false);
+}
+
+bool setupWiFi(char const *manager_ssid)
+{
+    return setupWiFi(manager_ssid, false);
 }
 
 bool setupWiFi(char const *manager_ssid, bool reset)
