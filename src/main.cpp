@@ -1,3 +1,4 @@
+// WARNING: Set the build definition correctly before running
 #define GAS_BUILD
 #define DEBUG false
 
