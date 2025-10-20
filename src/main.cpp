@@ -8,7 +8,7 @@
 
 #include "env.h"     // NOTE: CREATE + CONFIGURE BEFORE USE
 
-#define GAS_BUILD    // VERY IMPORTANT: CHECK BEFORE BUILDING/UPLOADING
+#define TEST_BUILD    // VERY IMPORTANT: CHECK BEFORE BUILDING/UPLOADING
 #define DEBUG false
 
 // BUILD DEFINITIONS
@@ -289,7 +289,7 @@ void loop(){
 #ifdef TEST_BUILD
 /*======================================================================================*/
 void setup(){
-	Serial.begin(115200);
+
 }
 
 void loop(){
