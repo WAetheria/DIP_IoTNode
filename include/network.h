@@ -12,7 +12,9 @@ bool setupWiFi(char const* manager_ssid, bool reset);
 
 void connectToWifi(const char* ssid, const char* password);
 
-int postJSON(const String& payload, HTTPClient& http);
+int postJSON(const String& payload, HTTPClient& http); 
+int postAutoJSON(const String& payload, const String serverURL);
+
 String getJSON(HTTPClient& http);
 
 #endif

@@ -51,6 +51,18 @@ int postJSON(const String& payload, HTTPClient& http){
 	return httpResponseCode;
 }
 
+int postAutoJSON(const String &payload, const String serverURL)
+{
+    static HTTPClient http;
+
+	if (!http.connected()){
+		http.begin(serverURL);
+		http.setReuse(true);
+	}
+
+	return postJSON(payload, http);
+}
+
 String getJSON(HTTPClient &http){
 	int httpResponseCode = http.GET();
 

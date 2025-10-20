@@ -58,14 +58,7 @@ void loop(){
 	serializeJson(doc, payload);
 
 	// HTTP Handling
-    static HTTPClient http;
-
-	if (!http.connected()){
-		http.begin(serverURL);
-		http.setReuse(true);
-	}
-
-	postJSON(payload, http);
+    postAutoJSON(payload, serverURL);
 
 	#if DEBUG == true
 	    delay(30000); // An added delay so the network doesn't get overloaded
