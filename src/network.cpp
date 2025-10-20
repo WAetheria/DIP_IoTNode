@@ -43,17 +43,12 @@ void connectToWifi(const char* ssid, const char* password){
     Serial.print("Done\n");                   // Show successful connection and local IP address
 }
 
-void postJSON(const String& payload, HTTPClient& http){
+int postJSON(const String& payload, HTTPClient& http){
 	http.addHeader("Content-Type", "application/json");
 	
 	int httpResponseCode = http.POST(payload);
 
-	Serial.print("HTTP Response Code: ");
-	Serial.println(httpResponseCode);
-
-	String httpResponse = http.getString();
-    Serial.print("HTTP Response: ");
-	Serial.println(httpResponse);
+	return httpResponseCode;
 }
 
 String getJSON(HTTPClient &http){
