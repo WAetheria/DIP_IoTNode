@@ -3,12 +3,16 @@
 
 #include <Arduino.h>
 
-void setup(){
+#include "camera.h"
 
+void setup(){
+    Serial.begin(115200);
+    camera_init();
 }
 
 void loop(){
-    
+    camera_capture();
+    delay(10000);
 }
 
 #endif

@@ -12,8 +12,8 @@
 
 #define GAS_SENSOR_MQ135 34
 #define GAS_SENSOR_MQ2   36
-#define LED_FOR_MQ135    16
-#define LED_FOR_MQ2      17
+#define LED_FOR_MQ135    22
+#define LED_FOR_MQ2      23
 #define FAN_MOTOR        21
 
 #define GAS_THRESHOLD    20     // In percentage (0% - 100%)

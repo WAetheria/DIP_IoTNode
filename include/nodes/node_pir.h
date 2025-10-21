@@ -11,14 +11,15 @@
 #include "env.h"     // NOTE: CREATE + CONFIGURE BEFORE USE
 
 #define PIR_SENSOR    16
-#define STOVE_SWITCH  -1
+#define STOVE_PIN     -1
 #define LED_OUTPUT    25 
 #define BUZZER_OUTPUT -1
 
 #define PIR_TIMEOUT   10000
+#define STOVE_ON      100
 
 Device pir     = Device(PIR_SENSOR   , DeviceMode::DIGITAL_INPUT);
-Device stove   = Device(STOVE_SWITCH , DeviceMode::DIGITAL_INPUT);
+Device stove   = Device(STOVE_PIN    , DeviceMode::ANALOG_INPUT);
 Device led     = Device(LED_OUTPUT   , DeviceMode::DIGITAL_OUTPUT);
 Device buzzer  = Device(BUZZER_OUTPUT, DeviceMode::DIGITAL_OUTPUT);
 
@@ -34,7 +35,7 @@ void setup(){
 void loop(){
     // Sensor Handling
 	bool inKitchen = (bool)pir.readInput();
-	bool stoveIsOn = (bool)stove.readInput();
+	bool stoveIsOn = (stove.readInput() >= STOVE_ON);
 
 	if (inKitchen){pirTimer.resetTimer();}
 

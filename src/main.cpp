@@ -1,5 +1,5 @@
 // WARNING: Set the build definition correctly before running
-#define GAS_BUILD
+#define TEST_BUILD
 #define DEBUG false
 
 #ifdef GAS_BUILD
@@ -13,4 +13,8 @@
 #endif
 #ifdef LIVROOM_BUILD
     #include "nodes/node_livroom.h"
+#endif
+
+#ifdef TEST_BUILD
+    #include "nodes/node_test.h"
 #endif
