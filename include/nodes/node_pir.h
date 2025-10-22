@@ -37,17 +37,13 @@ void loop(){
 	bool inKitchen = (bool)pir.readInput();
 	bool stoveIsOn = (stove.readInput() >= STOVE_ON);
 
+	Serial.printf("inKitchen: %d\n", inKitchen);
+	Serial.printf("stoveIsOn: %d\n", stoveIsOn);
+
 	if (inKitchen){pirTimer.resetTimer();}
 
 	(stoveIsOn && pirTimer.timedOut()) ? buzzer.turnOn() : buzzer.turnOff();
 	(!pirTimer.timedOut()) ? led.turnOn() : led.turnOff();
-
-	#if DEBUG == true
-		Serial.print("inKitchen: ");
-		Serial.println(inKitchen);
-		Serial.print("stoveIsOn: ");
-		Serial.println(stoveIsOn);
-	#endif
 
 	// JSON Handling
 	JsonDocument doc;
@@ -59,7 +55,9 @@ void loop(){
 	serializeJson(doc, payload);
 
 	// HTTP Handling
-    postAutoJSON(payload, serverURL);
+    int http_code = postAutoJSON(payload, serverURL);
+
+	Serial.printf("HTTP Response Code: %d\n", postAutoJSON(payload, serverURL));
 
 	#if DEBUG == true
 	    delay(30000); // An added delay so the network doesn't get overloaded
