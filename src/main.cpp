@@ -1,6 +1,6 @@
 // WARNING: Set the build definition correctly before running
 #define TEST_BUILD
-#define DEBUG false
+#define DEBUG true
 
 #ifdef GAS_BUILD
     #include "nodes/node_gas.h"

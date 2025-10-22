@@ -11,12 +11,12 @@
 #include "env.h"     // NOTE: CREATE + CONFIGURE BEFORE USE
 
 #define PIR_SENSOR    16
-#define STOVE_PIN     -1
+#define STOVE_PIN     35
 #define LED_OUTPUT    25 
 #define BUZZER_OUTPUT -1
 
 #define PIR_TIMEOUT   10000
-#define STOVE_ON      100
+#define STOVE_ON      500
 
 Device pir     = Device(PIR_SENSOR   , DeviceMode::DIGITAL_INPUT);
 Device stove   = Device(STOVE_PIN    , DeviceMode::ANALOG_INPUT);

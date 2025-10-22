@@ -4,15 +4,16 @@
 #include <Arduino.h>
 
 #include "camera.h"
+#include "device.h"
+
+Device resistor = Device(35, DeviceMode::ANALOG_INPUT);
 
 void setup(){
     Serial.begin(115200);
-    camera_init();
 }
 
 void loop(){
-    camera_capture();
-    delay(10000);
+    Serial.println(resistor.readInput());
 }
 
 #endif
