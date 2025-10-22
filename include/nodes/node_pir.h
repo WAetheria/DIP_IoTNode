@@ -11,7 +11,7 @@
 #include "env.h"     // NOTE: CREATE + CONFIGURE BEFORE USE
 
 #define PIR_SENSOR    16
-#define STOVE_PIN     35
+#define STOVE_PIN     34
 #define LED_OUTPUT    25 
 #define BUZZER_OUTPUT -1
 
