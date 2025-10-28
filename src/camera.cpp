@@ -50,9 +50,10 @@ esp_err_t camera_init(){
     return ESP_OK;
 }
 
-esp_err_t camera_capture(){
+esp_err_t camera_capture(camera_fb_t* fb){
     //acquire a frame
-    camera_fb_t* fb = esp_camera_fb_get();
+    fb = esp_camera_fb_get();
+
     if (!fb) {
         ESP_LOGE(TAG, "Camera Capture Failed");
         return ESP_FAIL;

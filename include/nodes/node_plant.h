@@ -6,6 +6,8 @@
 
 #include "network.h"
 #include "device.h"
+#include "clock.h"
+#include "camera.h"
 
 #include "env.h"     // NOTE: CREATE + CONFIGURE BEFORE USE
 
@@ -13,9 +15,11 @@
 #define WATER_PUMP      26 
 
 #define WATER_THRESHOLD 0
+#define CAMERA_TIMEOUT  300000
 
 Device water = Device(WATER_SENSOR, DeviceMode::ANALOG_INPUT);
 Device pump  = Device(WATER_PUMP  , DeviceMode::DIGITAL_OUTPUT);
+Timer cameraTimer = Timer(CAMERA_TIMEOUT);
 
 const char* serverURL = PLANT_ENDPOINT_URL;
 
@@ -34,6 +38,14 @@ void loop(){
 		Serial.println(waterLevel);
 	#endif
 
+	// JPEG Handling
+	camera_fb_t frameBuffer;
+
+	if (cameraTimer.timedOut()){
+		camera_capture(&frameBuffer);
+		cameraTimer.resetTimer();
+	}
+
     // JSON Handling
 	JsonDocument doc;
 	
@@ -43,7 +55,11 @@ void loop(){
 	serializeJson(doc, payload);
 
 	// HTTP Handling
-    postAutoJSON(payload, serverURL);
+    static HTTPClient http;
+
+	postJSON(payload, http);
+	postJPEG(&frameBuffer, http);
+
 
 	#if DEBUG == true
 	    delay(30000); // An added delay so the network doesn't get overloaded
