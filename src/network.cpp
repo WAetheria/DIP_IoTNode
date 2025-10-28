@@ -63,6 +63,14 @@ int postAutoJSON(const String &payload, const String serverURL)
 	return postJSON(payload, http);
 }
 
+int postJPEG(camera_fb_t *payload, HTTPClient &http){
+	http.addHeader("Content-Type", "image/jpeg");
+	
+	int httpResponseCode = http.POST(payload->buf, payload->len);
+
+	return httpResponseCode;
+}
+
 String getJSON(HTTPClient &http){
 	int httpResponseCode = http.GET();
 
