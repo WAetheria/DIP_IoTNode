@@ -33,10 +33,8 @@ void loop(){
     int waterLevel = water.readInput();
 
     (waterLevel <= WATER_THRESHOLD) ? pump.turnOn() : pump.turnOff();
-	#if DEBUG == true
-		Serial.print("Water Level: ");
-		Serial.println(waterLevel);
-	#endif
+	
+	Serial.printf("Water Level: %d\n", waterLevel);
 
 	// JPEG Handling
 	camera_fb_t frameBuffer;
@@ -56,10 +54,13 @@ void loop(){
 
 	// HTTP Handling
     static HTTPClient http;
+	if (!http.connected()){
+		http.begin(serverURL);
+		http.setReuse(true);
+	}
 
 	postJSON(payload, http);
 	postJPEG(&frameBuffer, http);
-
 
 	#if DEBUG == true
 	    delay(30000); // An added delay so the network doesn't get overloaded

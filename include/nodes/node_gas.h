@@ -48,14 +48,8 @@ void loop(){
     if (gas1Perc >= GAS_THRESHOLD || gas2Perc >= GAS_THRESHOLD){gasTimer.resetTimer();}
     (!gasTimer.timedOut()) ? fan.turnOn() : fan.turnOff();
 
-    Serial.print("Air Purity (Percentage): ");
-    Serial.println(gas1Perc);
-    Serial.print("Air Purity (Raw): ");
-    Serial.println(mq135Reading);
-    Serial.print("Volatile Concentration (Percentage): ");
-    Serial.println(gas2Perc);
-    Serial.print("Volatile Concentration (Raw): ");
-    Serial.println(mq2Reading);
+    Serial.printf("MQ135: %d \n", mq135Reading);
+    Serial.printf("MQ2:   %d \n", mq135Reading);
 
 	// JSON Handling
 	JsonDocument doc;
@@ -66,11 +60,13 @@ void loop(){
 	char payload[256];
 	serializeJson(doc, payload);
 
-	// HTTP Handling
-    Serial.println(postAutoJSON(payload, serverURL));
+	// HTTP Handling (REPLACE WITH AUTO LATER)
+    HTTPClient http;
+    http.begin(serverURL);
+    postJSON(payload, http);
 
 	#if DEBUG == true
-	    delay(30000); // An added delay so the network doesn't get overloaded
+	    delay(5000);
 	#endif
 }
 

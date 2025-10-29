@@ -54,10 +54,10 @@ void loop(){
 	char payload[256];
 	serializeJson(doc, payload);
 
-	// HTTP Handling
-    int http_code = postAutoJSON(payload, serverURL);
-
-	Serial.printf("HTTP Response Code: %d\n", postAutoJSON(payload, serverURL));
+	// HTTP Handling (REPLACE WITH AUTO LATER)
+    HTTPClient http;
+    http.begin(serverURL);
+    postJSON(payload, http);
 
 	#if DEBUG == true
 	    delay(30000); // An added delay so the network doesn't get overloaded

@@ -18,17 +18,16 @@ bool setupWiFi(char const* manager_ssid, bool reset);
 void connectToWifi(const char* ssid, const char* password);
 
 String postJSON(const String& payload, HTTPClient& http);
-int postSecureJSON(const String& payload, HTTPClient& http, String token);
+String postSecureJSON(const String& payload, HTTPClient& http, const String& token);
+String postSecureAutoJSON(const String& payload, const String& serverURL, const String& token);
 
-String postAutoJSON(const String& payload, const String serverURL);
-
-int postJPEG(camera_fb_t* payload, HTTPClient& http);
-int postSecureJPEG(camera_fb_t* payload, HTTPClient& http, String token);
+String postJPEG(camera_fb_t* payload, HTTPClient& http);
+String postSecureJPEG(camera_fb_t* payload, HTTPClient& http, const String& token);
 
 String getJSON(HTTPClient& http);
-String getSecureJSON(HTTPClient& http, String token);
+String getSecureJSON(HTTPClient& http, const String& token);
 
-void writeStringToEEPROM(int addrOffset, const String &str);
-String readStringFromEEPROM(int addrOffset);
+void saveString(int address, const String& str);
+String loadString(int address);
 
 #endif

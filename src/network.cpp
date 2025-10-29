@@ -43,64 +43,98 @@ void connectToWifi(const char* ssid, const char* password){
     Serial.print("Done\n");                   // Show successful connection and local IP address
 }
 
-String postJSON(const String& payload, HTTPClient& http){
+String postJSON(const String &payload, HTTPClient &http){
 	http.addHeader("Content-Type", "application/json");
 	
 	int httpResponseCode = http.POST(payload);
+	String httpResponse  = http.getString();
 
-	Serial.println(httpResponseCode);
-	Serial.println(http.getString());
-
-	return http.getString();
+	return httpResponse;
 }
 
-String postAutoJSON(const String &payload, const String serverURL)
-{
-    static HTTPClient http;
+String postSecureJSON(const String& payload, HTTPClient& http, const String& token){
+	String authKey = "Bearer " + token;
+
+	http.addHeader("Authorization", authKey);
+	http.addHeader("Content-Type", "application/json");
+
+	int httpResponseCode = http.POST(payload);
+	String httpResponse  = http.getString();
+
+	return httpResponse;	
+}
+
+String postSecureAutoJSON(const String& payload, const String& serverURL, const String& token){
+	static HTTPClient http;
 
 	if (!http.connected()){
 		http.begin(serverURL);
 		http.setReuse(true);
 	}
 
-	return postJSON(payload, http);
+	// TODO: Add JWT Handling here
+	return postSecureJSON(payload, http, token);
 }
 
-int postJPEG(camera_fb_t *payload, HTTPClient &http){
+String postJPEG(camera_fb_t* payload, HTTPClient& http){
 	http.addHeader("Content-Type", "image/jpeg");
 	
 	int httpResponseCode = http.POST(payload->buf, payload->len);
-
-	return httpResponseCode;
-}
-
-String getJSON(HTTPClient &http){
-	int httpResponseCode = http.GET();
-
-	Serial.print("HTTP Response Code: ");
-	Serial.println(httpResponseCode);
-
-	String httpResponse = http.getString();
-    Serial.print("HTTP Response: ");
-	Serial.println(httpResponse);
+	String httpResponse  = http.getString();
 
 	return httpResponse;
 }
 
-void writeStringToEEPROM(int addrOffset, const String &str) {
+String postSecureJPEG(camera_fb_t* payload, HTTPClient& http, const String& token){
+	String authKey = "Bearer " + token;
+
+	http.addHeader("Authorization", authKey);
+	http.addHeader("Content-Type", "image/jpeg");
+	
+	int httpResponseCode = http.POST(payload->buf, payload->len);
+	String httpResponse  = http.getString();
+
+	return httpResponse;
+}
+
+String getJSON(HTTPClient &http){
+	int httpResponseCode = http.GET();
+	String httpResponse  = http.getString();
+
+	return httpResponse;
+
+}
+
+String getSecureJSON(HTTPClient &http, const String& token){
+	String authKey = "Bearer " + token;
+
+	http.addHeader("Authorization", authKey);
+
+	int httpResponseCode = http.GET();
+	String httpResponse  = http.getString();
+
+	return httpResponse;
+}
+
+void saveString(int address, const String& str){
 	byte len = str.length();
-	EEPROM.write(addrOffset, len); // write string length first
+
+	EEPROM.write(address, len); // write string length first
 	for (int i = 0; i < len; i++) {
-		EEPROM.write(addrOffset + 1 + i, str[i]);
+		EEPROM.write(address + 1 + i, str[i]);
 	}
 }
 
-String readStringFromEEPROM(int addrOffset) {
-	int len = EEPROM.read(addrOffset);
+String loadString(int address)
+{
+    int len = EEPROM.read(address);
 	char data[len + 1];
+
 	for (int i = 0; i < len; i++) {
-		data[i] = EEPROM.read(addrOffset + 1 + i);
+		data[i] = EEPROM.read(address + 1 + i);
 	}
+
 	data[len] = '\0';
+
 	return String(data);
 }

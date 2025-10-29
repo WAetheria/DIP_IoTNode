@@ -87,9 +87,6 @@ void setup(){
 }
 
 void loop(){
-	String stuff = readStringFromEEPROM(TOKEN_ADDRESS);
-	Serial.println(stuff);
-
 	delay(1000);
 }
 
