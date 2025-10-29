@@ -43,15 +43,18 @@ void connectToWifi(const char* ssid, const char* password){
     Serial.print("Done\n");                   // Show successful connection and local IP address
 }
 
-int postJSON(const String& payload, HTTPClient& http){
+String postJSON(const String& payload, HTTPClient& http){
 	http.addHeader("Content-Type", "application/json");
 	
 	int httpResponseCode = http.POST(payload);
 
-	return httpResponseCode;
+	Serial.println(httpResponseCode);
+	Serial.println(http.getString());
+
+	return http.getString();
 }
 
-int postAutoJSON(const String &payload, const String serverURL)
+String postAutoJSON(const String &payload, const String serverURL)
 {
     static HTTPClient http;
 
@@ -82,4 +85,22 @@ String getJSON(HTTPClient &http){
 	Serial.println(httpResponse);
 
 	return httpResponse;
+}
+
+void writeStringToEEPROM(int addrOffset, const String &str) {
+	byte len = str.length();
+	EEPROM.write(addrOffset, len); // write string length first
+	for (int i = 0; i < len; i++) {
+		EEPROM.write(addrOffset + 1 + i, str[i]);
+	}
+}
+
+String readStringFromEEPROM(int addrOffset) {
+	int len = EEPROM.read(addrOffset);
+	char data[len + 1];
+	for (int i = 0; i < len; i++) {
+		data[i] = EEPROM.read(addrOffset + 1 + i);
+	}
+	data[len] = '\0';
+	return String(data);
 }

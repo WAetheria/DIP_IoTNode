@@ -16,7 +16,7 @@
 #define LED_FOR_MQ2      23
 #define FAN_MOTOR        21
 
-#define GAS_THRESHOLD    20     // In percentage (0% - 100%)
+#define GAS_THRESHOLD    25     // In percentage (0% - 100%)
 #define FAN_TIMEOUT      15000
 
 Device gas1 = Device(GAS_SENSOR_MQ135, DeviceMode::ANALOG_INPUT);
@@ -48,16 +48,14 @@ void loop(){
     if (gas1Perc >= GAS_THRESHOLD || gas2Perc >= GAS_THRESHOLD){gasTimer.resetTimer();}
     (!gasTimer.timedOut()) ? fan.turnOn() : fan.turnOff();
 
-    #if DEBUG == true
-        Serial.print("Air Purity (Percentage): ");
-        Serial.println(gas1Perc);
-        Serial.print("Air Purity (Raw): ");
-        Serial.println(mq135Reading);
-        Serial.print("Volatile Concentration (Percentage): ");
-        Serial.println(gas2Perc);
-        Serial.print("Volatile Concentration (Raw): ");
-        Serial.println(mq2Reading);
-    #endif
+    Serial.print("Air Purity (Percentage): ");
+    Serial.println(gas1Perc);
+    Serial.print("Air Purity (Raw): ");
+    Serial.println(mq135Reading);
+    Serial.print("Volatile Concentration (Percentage): ");
+    Serial.println(gas2Perc);
+    Serial.print("Volatile Concentration (Raw): ");
+    Serial.println(mq2Reading);
 
 	// JSON Handling
 	JsonDocument doc;
@@ -69,7 +67,7 @@ void loop(){
 	serializeJson(doc, payload);
 
 	// HTTP Handling
-    postAutoJSON(payload, serverURL);
+    Serial.println(postAutoJSON(payload, serverURL));
 
 	#if DEBUG == true
 	    delay(30000); // An added delay so the network doesn't get overloaded

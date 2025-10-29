@@ -1,6 +1,6 @@
 // WARNING: Set the build definition correctly before running
-#define PIR_BUILD
-#define DEBUG true
+#define TEST_BUILD
+#define DEBUG false
 
 #ifdef GAS_BUILD
     #include "nodes/node_gas.h"
