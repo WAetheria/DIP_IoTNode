@@ -6,20 +6,20 @@
 #define DEVICE_LIVROOM
 
 #ifdef DEVICE_GAS
-    const char* deviceID   = GAS_ID;
-    const char* deviceName = GAS_NAME; 
+    const char* deviceID   = GAS_NODE_ID;
+    const char* deviceName = GAS_NODE_NAME; 
 #endif
 #ifdef DEVICE_LIVROOM
-    const char* deviceID   = LIVROOM_ID;
-    const char* deviceName = LIVROOM_NAME; 
+    const char* deviceID   = LIVROOM_NODE_ID;
+    const char* deviceName = LIVROOM_NODE_NAME; 
 #endif
 #ifdef DEVICE_PIR
-    const char* deviceID   = PIR_ID;
-    const char* deviceName = PIR_NAME; 
+    const char* deviceID   = PIR_NODE_ID;
+    const char* deviceName = PIR_NODE_NAME; 
 #endif
 #ifdef DEVICE_PLANT
-    const char* deviceID   = PLANT_ID;
-    const char* deviceName = PLANT_NAME; 
+    const char* deviceID   = PLANT_NODE_ID;
+    const char* deviceName = PLANT_NODE_NAME; 
 #endif
 
 #define REFRESH_TOKEN_SIZE 128

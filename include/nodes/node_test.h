@@ -51,42 +51,25 @@ void loop() {
 #include "network.h"
 #include "env.h"
 
-#define TOKEN_SIZE    64
+#define TOKEN_SIZE    128
 #define TOKEN_ADDRESS 0
 
 void setup(){
 	Serial.begin(115200);
 	EEPROM.begin(TOKEN_SIZE);
-// 	setupWiFi();
 
-// 	JsonDocument setupDoc;
-// 	const String id = LIVROOM_ID;
-// 	const String deviceName = LIVROOM_NAME;
+	String token = "mkQ34lAZffpLRGKFRJzQueBA2FMCuU+aotcu/OLL+FiKEI259sdTAgh2Kx/s8RG0lfmYBznvvdTGSvE1whId3g==";
 
-// 	setupDoc["device_id"] = id;
-// 	setupDoc["name"] = deviceName;
+	saveString(TOKEN_ADDRESS, token);
+	EEPROM.commit();
 
-// 	char payload[256];
-// 	serializeJson(setupDoc, payload);
-
-// 	HTTPClient http;
-// 	http.begin("https://piot-183946185085.asia-southeast1.run.app/device");
-// 	String response = postJSON(payload, http);
-
-// 	JsonDocument doc;
-// 	deserializeJson(doc, response);
-
-// 	String jwt = doc["jwt"];
-// 	String refreshToken = doc["refresh_token"];
-
-// 	Serial.println(jwt);
-// 	Serial.println(refreshToken);
-
-// 	writeStringToEEPROM(TOKEN_ADDRESS, refreshToken);
-// 	EEPROM.commit();
+	Serial.println(token.length());
 }
 
 void loop(){
+	String result = loadString(TOKEN_ADDRESS);
+	Serial.println(result);
+
 	delay(1000);
 }
 
