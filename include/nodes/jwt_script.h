@@ -25,7 +25,7 @@
 #define REFRESH_TOKEN_SIZE 128
 #define REFRESH_TOKEN_ADDR 0
 
-const char* serverURL  = "example.com";
+const char* serverURL  = AUTHENTICATION_URL;
 
 void setup(){
     // Setups all the necessary stuff
