@@ -27,7 +27,7 @@ String postSecureJPEG(camera_fb_t* payload, HTTPClient& http, const String& toke
 String getJSON(HTTPClient& http);
 String getSecureJSON(HTTPClient& http, const String& token);
 
-void saveString(int address, const String& str);
+void saveString(int address, const String& str); // Run EEPROM.commit() after calling this function
 String loadString(int address);
 
 #endif

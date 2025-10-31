@@ -1,5 +1,5 @@
 // WARNING: Set the build definition correctly before running
-#define TEST_BUILD
+#define JWT_BUILD
 #define DEBUG false
 
 #ifdef GAS_BUILD
@@ -17,4 +17,7 @@
 
 #ifdef TEST_BUILD
     #include "nodes/node_test.h"
+#endif
+#ifdef JWT_BUILD
+    #include "nodes/jwt_script.h"
 #endif
