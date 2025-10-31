@@ -3,12 +3,29 @@
 #include "network.h"
 #include "env.h"
 
+#define DEVICE_LIVROOM
+
+#ifdef DEVICE_GAS
+    const char* deviceID   = GAS_ID;
+    const char* deviceName = GAS_NAME; 
+#endif
+#ifdef DEVICE_LIVROOM
+    const char* deviceID   = LIVROOM_ID;
+    const char* deviceName = LIVROOM_NAME; 
+#endif
+#ifdef DEVICE_PIR
+    const char* deviceID   = PIR_ID;
+    const char* deviceName = PIR_NAME; 
+#endif
+#ifdef DEVICE_PLANT
+    const char* deviceID   = PLANT_ID;
+    const char* deviceName = PLANT_NAME; 
+#endif
+
 #define REFRESH_TOKEN_SIZE 128
 #define REFRESH_TOKEN_ADDR 0
 
 const char* serverURL  = "example.com";
-const char* deviceID   = "id";
-const char* deviceName = "name"; 
 
 void setup(){
     // Setups all the necessary stuff
