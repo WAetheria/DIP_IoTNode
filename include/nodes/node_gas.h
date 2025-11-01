@@ -29,9 +29,15 @@ Timer gasTimer = Timer(FAN_TIMEOUT);
 
 const char* serverURL = GAS_ENDPOINT_URL;
 
+String jwt;
+String refreshToken;
+
 void setup(){
     Serial.begin(115200);
     setupWiFi();
+
+    jwt = loadToken(JWT_KEYNAME);
+    refreshToken = loadToken(REFRESHTOKEN_KEYNAME);
 }
 
 void loop(){
@@ -61,9 +67,7 @@ void loop(){
 	serializeJson(doc, payload);
 
 	// HTTP Handling (REPLACE WITH AUTO LATER)
-    HTTPClient http;
-    http.begin(serverURL);
-    postJSON(payload, http);
+    postSecureAutoJSON(payload, serverURL, jwt, refreshToken);
 
 	#if DEBUG == true
 	    delay(5000);

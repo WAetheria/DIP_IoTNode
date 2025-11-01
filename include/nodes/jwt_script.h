@@ -59,13 +59,21 @@ void setup(){
     Serial.println(refreshToken);
 
     // Save the refresh token to permanent memory
-    if (refreshToken != NULL){
-        saveToken(refreshToken);
+    if (jwt != NULL){
+        saveToken(JWT_KEYNAME, jwt);
     }
 
-    String savedToken = loadToken();
-    Serial.print("Saved Token: ");
-    Serial.println(savedToken);
+    if (refreshToken != NULL){
+        saveToken(REFRESHTOKEN_KEYNAME, refreshToken);
+    }
+
+    String savedJWT = loadToken(JWT_KEYNAME);
+    Serial.print("Saved JWT: ");
+    Serial.println(savedJWT);
+
+    String savedRefreshToken = loadToken(REFRESHTOKEN_KEYNAME);
+    Serial.print("Saved Refresh Token: ");
+    Serial.println(savedRefreshToken);
 }
 
 void loop(){}

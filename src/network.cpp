@@ -49,24 +49,22 @@ String postJSON(const String &payload, HTTPClient &http){
 	int httpResponseCode = http.POST(payload);
 	String httpResponse  = http.getString();
 
-	Serial.printf("HTTP Code: %d\n", httpResponseCode);
+	Serial.print("HTTP Code: ");
+	Serial.println(httpResponseCode);
 
 	return httpResponse;
 }
 
-String postSecureJSON(const String& payload, HTTPClient& http, const String& token){
+int postSecureJSON(const String& payload, HTTPClient& http, const String& token){
 	String authKey = "Bearer " + token;
 
 	http.addHeader("Authorization", authKey);
 	http.addHeader("Content-Type", "application/json");
 
-	int httpResponseCode = http.POST(payload);
-	String httpResponse  = http.getString();
-
-	return httpResponse;	
+	return http.POST(payload);	
 }
 
-String postSecureAutoJSON(const String& payload, const String& serverURL, const String& token){
+void postSecureAutoJSON(const String& payload, const String& serverURL, String& token, const String& refreshToken){
 	static HTTPClient http;
 
 	if (!http.connected()){
@@ -74,8 +72,18 @@ String postSecureAutoJSON(const String& payload, const String& serverURL, const 
 		http.setReuse(true);
 	}
 
-	// TODO: Add JWT Handling here
-	return postSecureJSON(payload, http, token);
+	int httpResponseCode = postSecureJSON(payload, http, token);
+
+	if (httpResponseCode == 401){
+		Serial.println("Invalid JWT, refreshing...");
+		postSecureJSON(payload, http, refreshToken);
+
+		String response = http.getString();
+		token = parseJWT(response);
+
+		Serial.print("JWT Updated: ");
+		Serial.println(token);
+	}
 }
 
 String postJPEG(camera_fb_t* payload, HTTPClient& http){
@@ -118,21 +126,30 @@ String getSecureJSON(HTTPClient &http, const String& token){
 	return httpResponse;
 }
 
-void saveToken(String token){
+void saveToken(const char* keyName, const String& token){
     Preferences pref;
 
-    pref.begin("jwt", false);
-    pref.putString("refreshToken", token);
+    pref.begin("tokens", false);
+    pref.putString(keyName, token);
     pref.end();
 }
 
-String loadToken(){
+String loadToken(const char* keyName){
     Preferences pref;
     String result;
 
-    pref.begin("jwt", false);
-    result = pref.getString("refreshToken");
+    pref.begin("tokens", true);
+    result = pref.getString(keyName);
     pref.end();
     
     return result;
+}
+
+String parseJWT(String &response){
+	JsonDocument doc;
+
+	deserializeJson(doc, response);
+	String jwt = doc["jwt"];
+
+	return jwt;
 }
