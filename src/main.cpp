@@ -1,5 +1,5 @@
 // WARNING: Set the build definition correctly before running
-#define GAS_BUILD
+#define PIR_BUILD
 #define DEBUG false
 
 #ifdef GAS_BUILD

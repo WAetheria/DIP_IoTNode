@@ -27,9 +27,20 @@ Timer pirTimer = Timer(PIR_TIMEOUT);
 
 const char* serverURL = PIR_ENDPOINT_URL;
 
+String jwt;
+String refreshToken;
+
 void setup(){
     Serial.begin(115200);
     setupWiFi();
+
+	jwt = loadToken(JWT_KEYNAME);
+    refreshToken = loadToken(REFRESHTOKEN_KEYNAME);
+
+	Serial.print("JWT: ");
+	Serial.println(jwt);
+	Serial.print("Refresh Token: ");
+	Serial.println(refreshToken);
 }
 
 void loop(){
@@ -54,10 +65,10 @@ void loop(){
 	char payload[256];
 	serializeJson(doc, payload);
 
-	// HTTP Handling (REPLACE WITH AUTO LATER)
-    HTTPClient http;
-    http.begin(serverURL);
-    postJSON(payload, http);
+	// HTTP Handling
+	if(postSecureAutoJSON(payload, serverURL, jwt, refreshToken)){
+        saveToken(JWT_KEYNAME, jwt);
+    }
 
 	#if DEBUG == true
 	    delay(30000); // An added delay so the network doesn't get overloaded

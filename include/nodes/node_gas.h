@@ -71,7 +71,7 @@ void loop(){
 	char payload[256];
 	serializeJson(doc, payload);
 
-	// HTTP Handling (REPLACE WITH AUTO LATER)
+	// HTTP Handling
     if(postSecureAutoJSON(payload, serverURL, jwt, refreshToken)){
         saveToken(JWT_KEYNAME, jwt);
     }

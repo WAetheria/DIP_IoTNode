@@ -3,7 +3,7 @@
 #include "network.h"
 #include "env.h"
 
-#define DEVICE_GAS
+#define DEVICE_PIR
 
 #ifdef DEVICE_GAS
     const char* deviceID   = GAS_NODE_ID;
@@ -59,13 +59,8 @@ void setup(){
     Serial.println(refreshToken);
 
     // Save the refresh token to permanent memory
-    if (jwt != NULL){
-        saveToken(JWT_KEYNAME, jwt);
-    }
-
-    if (refreshToken != NULL){
-        saveToken(REFRESHTOKEN_KEYNAME, refreshToken);
-    }
+    saveToken(JWT_KEYNAME, jwt);
+    saveToken(REFRESHTOKEN_KEYNAME, refreshToken);
 
     String savedJWT = loadToken(JWT_KEYNAME);
     Serial.print("Saved JWT: ");
