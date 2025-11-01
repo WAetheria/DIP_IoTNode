@@ -64,7 +64,7 @@ int postSecureJSON(const String& payload, HTTPClient& http, const String& token)
 	return http.POST(payload);	
 }
 
-void postSecureAutoJSON(const String& payload, const String& serverURL, String& token, const String& refreshToken){
+bool postSecureAutoJSON(const String& payload, const String& serverURL, String& token, const String& refreshToken){
 	static HTTPClient http;
 
 	if (!http.connected()){
@@ -72,18 +72,24 @@ void postSecureAutoJSON(const String& payload, const String& serverURL, String& 
 		http.setReuse(true);
 	}
 
+	// Posts using the JWT saved
 	int httpResponseCode = postSecureJSON(payload, http, token);
+	Serial.printf("HTTP Code: %d\n", httpResponseCode);
 
+	// If JWT expired, send refresh token for new JWT
 	if (httpResponseCode == 401){
-		Serial.println("Invalid JWT, refreshing...");
-		postSecureJSON(payload, http, refreshToken);
+		Serial.println("Refreshing JWT...");
+		String newJWT = getNewJWT(refreshToken);
 
-		String response = http.getString();
-		token = parseJWT(response);
+		if (newJWT != "F"){
+			Serial.println("JWT Refreshed!");
+			token = newJWT;
 
-		Serial.print("JWT Updated: ");
-		Serial.println(token);
+			return true;
+		}
 	}
+
+	return false;
 }
 
 String postJPEG(camera_fb_t* payload, HTTPClient& http){
@@ -152,4 +158,28 @@ String parseJWT(String &response){
 	String jwt = doc["jwt"];
 
 	return jwt;
+}
+
+String getNewJWT(const String &refreshToken){
+	HTTPClient http;
+	http.begin(REFRESH_JWT_URL);
+
+	String authKey = "Bearer " + refreshToken;
+	http.addHeader("Authorization", authKey);
+	String emptyPayload = " ";
+
+	int httpResponseCode = http.POST(emptyPayload);
+	String httpResponse  = http.getString();
+
+	Serial.print("GetNewJWT HTTP Code: ");
+	Serial.println(httpResponseCode);
+	Serial.println("GetNewJWT Response: ");
+	Serial.println(httpResponse);
+
+	if (httpResponseCode == 201){
+		return parseJWT(httpResponse);
+	}
+
+	http.end();
+	return "F";
 }

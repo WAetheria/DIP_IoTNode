@@ -1,5 +1,5 @@
 // WARNING: Set the build definition correctly before running
-#define JWT_SCRIPT
+#define GAS_BUILD
 #define DEBUG false
 
 #ifdef GAS_BUILD
