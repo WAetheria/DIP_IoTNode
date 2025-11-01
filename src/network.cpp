@@ -49,6 +49,8 @@ String postJSON(const String &payload, HTTPClient &http){
 	int httpResponseCode = http.POST(payload);
 	String httpResponse  = http.getString();
 
+	Serial.printf("HTTP Code: %d\n", httpResponseCode);
+
 	return httpResponse;
 }
 
@@ -116,25 +118,21 @@ String getSecureJSON(HTTPClient &http, const String& token){
 	return httpResponse;
 }
 
-void saveString(int address, const String& str){
-	byte len = str.length();
+void saveToken(String token){
+    Preferences pref;
 
-	EEPROM.write(address, len); // write string length first
-	for (int i = 0; i < len; i++) {
-		EEPROM.write(address + 1 + i, str[i]);
-	}
+    pref.begin("jwt", false);
+    pref.putString("refreshToken", token);
+    pref.end();
 }
 
-String loadString(int address)
-{
-    int len = EEPROM.read(address);
-	char data[len + 1];
+String loadToken(){
+    Preferences pref;
+    String result;
 
-	for (int i = 0; i < len; i++) {
-		data[i] = EEPROM.read(address + 1 + i);
-	}
-
-	data[len] = '\0';
-
-	return String(data);
+    pref.begin("jwt", false);
+    result = pref.getString("refreshToken");
+    pref.end();
+    
+    return result;
 }
