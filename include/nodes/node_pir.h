@@ -13,7 +13,7 @@
 #define PIR_SENSOR    16
 #define STOVE_PIN     34
 #define LED_OUTPUT    25 
-#define BUZZER_OUTPUT -1
+#define BUZZER_OUTPUT 26
 
 #define PIR_TIMEOUT   10000
 #define STOVE_ON      500
@@ -21,7 +21,7 @@
 Device pir     = Device(PIR_SENSOR   , DeviceMode::DIGITAL_INPUT);
 Device stove   = Device(STOVE_PIN    , DeviceMode::ANALOG_INPUT);
 Device led     = Device(LED_OUTPUT   , DeviceMode::DIGITAL_OUTPUT);
-Device buzzer  = Device(BUZZER_OUTPUT, DeviceMode::DIGITAL_OUTPUT);
+Device buzzer  = Device(BUZZER_OUTPUT, DeviceMode::PWM_OUTPUT);
 
 Timer pirTimer = Timer(PIR_TIMEOUT);
 
@@ -41,6 +41,9 @@ void setup(){
 	Serial.println(jwt);
 	Serial.print("Refresh Token: ");
 	Serial.println(refreshToken);
+
+	buzzer.setPWM(250, 8);
+	buzzer.setDuty(0.5);
 }
 
 void loop(){
