@@ -64,6 +64,46 @@ int postSecureJSON(const String& payload, HTTPClient& http, const String& token)
 	return http.POST(payload);	
 }
 
+String getJSON(HTTPClient &http){
+	int httpResponseCode = http.GET();
+	String httpResponse  = http.getString();
+
+	return httpResponse;
+
+}
+
+String getSecureJSON(HTTPClient &http, const String& token){
+	String authKey = "Bearer " + token;
+
+	http.addHeader("Authorization", authKey);
+
+	int httpResponseCode = http.GET();
+	String httpResponse  = http.getString();
+
+	return httpResponse;
+}
+
+String postJPEG(camera_fb_t* payload, HTTPClient& http){
+	http.addHeader("Content-Type", "image/jpeg");
+	
+	int httpResponseCode = http.POST(payload->buf, payload->len);
+	String httpResponse  = http.getString();
+
+	return httpResponse;
+}
+
+String postSecureJPEG(camera_fb_t* payload, HTTPClient& http, const String& token){
+	String authKey = "Bearer " + token;
+
+	http.addHeader("Authorization", authKey);
+	http.addHeader("Content-Type", "image/jpeg");
+	
+	int httpResponseCode = http.POST(payload->buf, payload->len);
+	String httpResponse  = http.getString();
+
+	return httpResponse;
+}
+
 bool postSecureAutoJSON(const String& payload, const String& serverURL, String& token, const String& refreshToken){
 	static HTTPClient http;
 
@@ -90,46 +130,6 @@ bool postSecureAutoJSON(const String& payload, const String& serverURL, String& 
 	}
 
 	return false;
-}
-
-String postJPEG(camera_fb_t* payload, HTTPClient& http){
-	http.addHeader("Content-Type", "image/jpeg");
-	
-	int httpResponseCode = http.POST(payload->buf, payload->len);
-	String httpResponse  = http.getString();
-
-	return httpResponse;
-}
-
-String postSecureJPEG(camera_fb_t* payload, HTTPClient& http, const String& token){
-	String authKey = "Bearer " + token;
-
-	http.addHeader("Authorization", authKey);
-	http.addHeader("Content-Type", "image/jpeg");
-	
-	int httpResponseCode = http.POST(payload->buf, payload->len);
-	String httpResponse  = http.getString();
-
-	return httpResponse;
-}
-
-String getJSON(HTTPClient &http){
-	int httpResponseCode = http.GET();
-	String httpResponse  = http.getString();
-
-	return httpResponse;
-
-}
-
-String getSecureJSON(HTTPClient &http, const String& token){
-	String authKey = "Bearer " + token;
-
-	http.addHeader("Authorization", authKey);
-
-	int httpResponseCode = http.GET();
-	String httpResponse  = http.getString();
-
-	return httpResponse;
 }
 
 void saveToken(const char* keyName, const String& token){
