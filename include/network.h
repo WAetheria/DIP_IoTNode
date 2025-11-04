@@ -26,11 +26,11 @@ String postJSON(const String& payload, HTTPClient& http);
 int postSecureJSON(const String& payload, HTTPClient& http, const String& token);
 
 String getJSON(HTTPClient& http);
-String getSecureJSON(HTTPClient& http, const String& token);
+int getSecureJSON(HTTPClient& http, const String& token);
 
 // JPEG Handling
 String postJPEG(camera_fb_t* payload, HTTPClient& http);
-String postSecureJPEG(camera_fb_t* payload, HTTPClient& http, const String& token);
+int postSecureJPEG(camera_fb_t* payload, HTTPClient& http, const String& token);
 
 // Returns a true when JWT is refreshed
 bool postSecureAutoJSON(const String& payload, const String& serverURL, String& token, const String& refreshToken);

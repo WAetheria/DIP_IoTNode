@@ -72,15 +72,12 @@ String getJSON(HTTPClient &http){
 
 }
 
-String getSecureJSON(HTTPClient &http, const String& token){
+int getSecureJSON(HTTPClient &http, const String& token){
 	String authKey = "Bearer " + token;
 
 	http.addHeader("Authorization", authKey);
 
-	int httpResponseCode = http.GET();
-	String httpResponse  = http.getString();
-
-	return httpResponse;
+	return http.GET();
 }
 
 String postJPEG(camera_fb_t* payload, HTTPClient& http){
@@ -92,16 +89,13 @@ String postJPEG(camera_fb_t* payload, HTTPClient& http){
 	return httpResponse;
 }
 
-String postSecureJPEG(camera_fb_t* payload, HTTPClient& http, const String& token){
+int postSecureJPEG(camera_fb_t* payload, HTTPClient& http, const String& token){
 	String authKey = "Bearer " + token;
 
 	http.addHeader("Authorization", authKey);
 	http.addHeader("Content-Type", "image/jpeg");
 	
-	int httpResponseCode = http.POST(payload->buf, payload->len);
-	String httpResponse  = http.getString();
-
-	return httpResponse;
+	return http.POST(payload->buf, payload->len);
 }
 
 bool postSecureAutoJSON(const String& payload, const String& serverURL, String& token, const String& refreshToken){
@@ -122,8 +116,36 @@ bool postSecureAutoJSON(const String& payload, const String& serverURL, String& 
 		String newJWT = getNewJWT(refreshToken);
 
 		if (newJWT != "F"){
-			Serial.println("JWT Refreshed!");
 			token = newJWT;
+			Serial.println("JWT Refreshed!");
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool getSecureAutoJSON(const String &serverURL, String &token, const String &refreshToken){
+	static HTTPClient http;
+
+	if (!http.connected()){
+		http.begin(serverURL);
+		http.setReuse(true);
+	}
+
+	// Posts using the JWT saved
+	int httpResponseCode = getSecureJSON(http, token);
+	Serial.printf("HTTP Code: %d\n", httpResponseCode);
+
+	// If JWT expired, send refresh token for new JWT
+	if (httpResponseCode == 401){
+		Serial.println("Refreshing JWT...");
+		String newJWT = getNewJWT(refreshToken);
+
+		if (newJWT != "F"){
+			token = newJWT;
+			Serial.println("JWT Refreshed!");
 
 			return true;
 		}
