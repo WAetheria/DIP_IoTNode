@@ -11,7 +11,7 @@
 
 camera_fb_t fb;
 
-const char* serverURL = "example.com";
+const char* serverURL = "http://10.139.217.226:8000/upload";
 
 void setup(){
 	Serial.begin(115200);
@@ -19,10 +19,30 @@ void setup(){
 
 	camera_init();
 
-	camera_capture(&fb);
+	if (WiFi.status() == WL_CONNECTED) {
+		HTTPClient http;
+		http.begin(serverURL
+		);
+		http.addHeader("Content-Type", "image/jpeg");
 
-	HTTPClient http;
-	postJPEG(&fb, http);
+		// Capture a frame
+		camera_fb_t *fb = esp_camera_fb_get();
+		if (!fb) {
+		Serial.println("Camera capture failed");
+		delay(2000);
+		return;
+		}
+
+		// Send the JPEG buffer
+		int httpCode = http.POST(fb->buf, fb->len);
+		Serial.printf("Upload result: %d\n", httpCode);
+		Serial.println(http.errorToString(httpCode));
+
+		http.end();
+		esp_camera_fb_return(fb);
+	} else {
+		Serial.println("WiFi not connected");
+	}
 }
 
 void loop(){

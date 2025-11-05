@@ -11,15 +11,13 @@
 
 #include "env.h"     // NOTE: CREATE + CONFIGURE BEFORE USE
 
-#define WATER_SENSOR    -1 
-#define WATER_PUMP      -1
+#define WATER_SENSOR    36 
+#define WATER_PUMP      26
 
 #define WATER_THRESHOLD 1000
-#define CAMERA_TIMEOUT  300000
 
 Device water = Device(WATER_SENSOR, DeviceMode::ANALOG_INPUT);
 Device pump  = Device(WATER_PUMP  , DeviceMode::DIGITAL_OUTPUT);
-Timer cameraTimer = Timer(CAMERA_TIMEOUT);
 
 const char* serverURL = PLANT_ENDPOINT_URL;
 
@@ -37,8 +35,6 @@ void setup(){
     Serial.println(jwt);
     Serial.print("Refresh Token: ");
     Serial.println(refreshToken);
-
-	camera_init();
 }
 
 void loop(){
@@ -48,16 +44,6 @@ void loop(){
     (waterLevel <= WATER_THRESHOLD) ? pump.turnOn() : pump.turnOff();
 	
 	Serial.printf("Water Level: %d\n", waterLevel);
-
-	// JPEG Handling
-	camera_fb_t frameBuffer;
-	bool shouldSendJPEG = false;
-
-	if (cameraTimer.timedOut()){
-		camera_capture(&frameBuffer);
-		cameraTimer.resetTimer();
-		shouldSendJPEG = true;
-	}
 
     // JSON Handling
 	JsonDocument doc;
@@ -71,13 +57,6 @@ void loop(){
     if(postSecureAutoJSON(payload, serverURL, jwt, refreshToken)){
         saveToken(JWT_KEYNAME, jwt);
     }
-
-	if (shouldSendJPEG){
-		HTTPClient httpJPEG;
-		httpJPEG.begin(serverURL);
-		postJPEG(&frameBuffer, httpJPEG);
-		httpJPEG.end();
-	}
 
 	#if DEBUG == true
 	    delay(30000); // An added delay so the network doesn't get overloaded

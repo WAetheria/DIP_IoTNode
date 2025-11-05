@@ -1,5 +1,5 @@
 // WARNING: Set the build definition correctly before running
-#define TEST_BUILD
+#define PLANT_BUILD
 #define DEBUG false
 
 #ifdef GAS_BUILD

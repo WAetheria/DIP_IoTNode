@@ -47,6 +47,10 @@ void loop(){
     float humidity    = doc["humidity"];
     int illumination  = doc["illumination"];
 
+    Serial.printf("Temperature: %f", &temperature);
+    Serial.printf("Humidity: %f", &humidity);
+    Serial.printf("Illumination: %d", &illumination);
+
     (temperature  >= TEMPERATURE_THRESHOLD)  ? fan.turnOn() : fan.turnOff();
     (humidity     >= HUMIDITY_THRESHOLD)     ? led2.turnOn() : led2.turnOff();
     (illumination >= ILLUMINATION_THRESHOLD) ? led3.turnOn() : led3.turnOff();

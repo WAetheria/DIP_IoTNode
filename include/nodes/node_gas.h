@@ -60,7 +60,7 @@ void loop(){
     (!gasTimer.timedOut()) ? fan.turnOn() : fan.turnOff();
 
     Serial.printf("MQ135: %d \n", mq135Reading);
-    Serial.printf("MQ2:   %d \n", mq135Reading);
+    Serial.printf("MQ2:   %d \n", mq2Reading);
 
 	// JSON Handling
 	JsonDocument doc;

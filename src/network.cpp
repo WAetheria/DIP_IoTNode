@@ -84,6 +84,7 @@ String postJPEG(camera_fb_t* payload, HTTPClient& http){
 	http.addHeader("Content-Type", "image/jpeg");
 	
 	int httpResponseCode = http.POST(payload->buf, payload->len);
+	Serial.println(httpResponseCode);
 	String httpResponse  = http.getString();
 
 	return httpResponse;
