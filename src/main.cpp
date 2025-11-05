@@ -11,6 +11,9 @@
 #ifdef PLANT_BUILD
     #include "nodes/node_plant.h"
 #endif
+#ifdef CAMERA_BUILD
+    #include "nodes/node_plant_camera.h"
+#endif
 #ifdef LIVROOM_BUILD
     #include "nodes/node_livroom.h"
 #endif
