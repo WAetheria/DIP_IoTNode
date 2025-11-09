@@ -37,12 +37,9 @@ void loop(){
 		http.begin(serverURL);
 		http.setReuse(true);
 	}
-    
-    int httpResponseCode = http.GET();
-    response = http.getString();
 
-    Serial.print("HTTP Code: ");
-    Serial.println(httpResponseCode);
+    response = getJSON(http);
+
     Serial.print("Response: ");
     Serial.println(response);
 

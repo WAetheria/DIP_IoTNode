@@ -21,20 +21,9 @@ Device pump  = Device(WATER_PUMP  , DeviceMode::DIGITAL_OUTPUT);
 
 const char* serverURL = PLANT_ENDPOINT_URL;
 
-String jwt;
-String refreshToken;
-
 void setup(){
     Serial.begin(115200);
     setupWiFi();
-
-    jwt = loadToken(JWT_KEYNAME);
-    refreshToken = loadToken(REFRESHTOKEN_KEYNAME);
-
-    Serial.print("JWT: ");
-    Serial.println(jwt);
-    Serial.print("Refresh Token: ");
-    Serial.println(refreshToken);
 }
 
 void loop(){
@@ -54,9 +43,15 @@ void loop(){
 	serializeJson(doc, payload);
 
 	// HTTP Handling
-    if(postSecureAutoJSON(payload, serverURL, jwt, refreshToken)){
-        saveToken(JWT_KEYNAME, jwt);
-    }
+    String response;
+    static HTTPClient http;
+
+    if (!http.connected()){
+		http.begin(serverURL);
+		http.setReuse(true);
+	}
+    
+    postJSON(payload, http);
 
 	#if DEBUG == true
 	    delay(30000); // An added delay so the network doesn't get overloaded

@@ -68,6 +68,9 @@ String getJSON(HTTPClient &http){
 	int httpResponseCode = http.GET();
 	String httpResponse  = http.getString();
 
+	Serial.print("HTTP Code: ");
+	Serial.println(httpResponseCode);
+
 	return httpResponse;
 
 }
