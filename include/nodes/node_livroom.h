@@ -23,29 +23,27 @@ Device led3 = Device(LED3_PIN, DeviceMode::DIGITAL_OUTPUT);
 
 const char* serverURL = LIVROOM_ENDPOINT_URL;
 
-String jwt;
-String refreshToken;
-
 void setup(){
     Serial.begin(115200);
     setupWiFi();
-
-    jwt = loadToken(JWT_KEYNAME);
-    refreshToken = loadToken(REFRESHTOKEN_KEYNAME);
-
-    Serial.print("JWT: ");
-    Serial.println(jwt);
-    Serial.print("Refresh Token: ");
-    Serial.println(refreshToken);
 }
 
 void loop(){
     // HTTP Handling
     String response;
-    if(getSecureAutoJSON(response, serverURL, jwt, refreshToken)){
-        saveToken(JWT_KEYNAME, jwt);
-    }
-    Serial.print("Actual Response: ");
+    static HTTPClient http;
+
+    if (!http.connected()){
+		http.begin(serverURL);
+		http.setReuse(true);
+	}
+    
+    int httpResponseCode = http.GET();
+    response = http.getString();
+
+    Serial.print("HTTP Code: ");
+    Serial.println(httpResponseCode);
+    Serial.print("Response: ");
     Serial.println(response);
 
     JsonDocument doc;
