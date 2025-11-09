@@ -3,7 +3,7 @@
 #include "network.h"
 #include "env.h"
 
-#define DEVICE_PIR
+#define DEVICE_LIVROOM
 
 #ifdef DEVICE_GAS
     const char* deviceID   = GAS_NODE_ID;

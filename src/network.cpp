@@ -127,7 +127,7 @@ bool postSecureAutoJSON(const String& payload, const String& serverURL, String& 
 	return false;
 }
 
-bool getSecureAutoJSON(const String &serverURL, String &token, const String &refreshToken){
+bool getSecureAutoJSON(String& payload, const String& serverURL, String& token, const String& refreshToken){
 	static HTTPClient http;
 
 	if (!http.connected()){
@@ -138,6 +138,7 @@ bool getSecureAutoJSON(const String &serverURL, String &token, const String &ref
 	// Posts using the JWT saved
 	int httpResponseCode = getSecureJSON(http, token);
 	Serial.printf("HTTP Code: %d\n", httpResponseCode);
+	payload = http.getString();
 
 	// If JWT expired, send refresh token for new JWT
 	if (httpResponseCode == 401){

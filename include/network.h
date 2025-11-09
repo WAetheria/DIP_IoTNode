@@ -34,7 +34,7 @@ int postSecureJPEG(camera_fb_t* payload, HTTPClient& http, const String& token);
 
 // Returns a true when JWT is refreshed
 bool postSecureAutoJSON(const String& payload, const String& serverURL, String& token, const String& refreshToken);
-bool getSecureAutoJSON(const String& serverURL, String& token, const String& refreshToken);
+bool getSecureAutoJSON(String& payload, const String& serverURL, String& token, const String& refreshToken);
 
 // Token handling, probably should be in a different header file
 void saveToken(const char* keyName, const String& token);
