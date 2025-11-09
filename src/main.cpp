@@ -17,6 +17,9 @@
 #ifdef LIVROOM_BUILD
     #include "nodes/node_livroom.h"
 #endif
+#ifdef PLANTLIV_BUILD
+    #include "nodes/node_plantLivroom.h"
+#endif
 
 #ifdef TEST_BUILD
     #include "nodes/node_test.h"
