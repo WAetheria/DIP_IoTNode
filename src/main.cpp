@@ -1,5 +1,5 @@
 // WARNING: Set the build definition correctly before running
-#define JWT_SCRIPT
+#define PLANTLIV_BUILD
 #define DEBUG false
 
 #ifdef GAS_BUILD
@@ -18,7 +18,7 @@
     #include "nodes/node_livroom.h"
 #endif
 #ifdef PLANTLIV_BUILD
-    #include "nodes/node_plantLivroom.h"
+    #include "nodes/node_plantLiv.h"
 #endif
 
 #ifdef TEST_BUILD

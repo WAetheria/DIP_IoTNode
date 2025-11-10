@@ -14,9 +14,9 @@
 #define LED2_PIN 17
 #define LED3_PIN 25
 
-#define TEMPERATURE_THRESHOLD  0
-#define HUMIDITY_THRESHOLD     0
-#define ILLUMINATION_THRESHOLD 0
+#define TEMPERATURE_THRESHOLD  28
+#define HUMIDITY_THRESHOLD     75
+#define ILLUMINATION_THRESHOLD 500
 
 Device led1 = Device(LED1_PIN, DeviceMode::DIGITAL_OUTPUT);
 Device led2 = Device(LED2_PIN, DeviceMode::DIGITAL_OUTPUT);
@@ -57,6 +57,7 @@ void loop(){
     }
 
     // Living Room Node Portion
+    Serial.println("====================LIVING ROOM PORTION !!!====================");
     String responseLivRoom;
     responseLivRoom = getJSON(http1);
 
@@ -79,10 +80,13 @@ void loop(){
     (illumination >= ILLUMINATION_THRESHOLD) ? led3.turnOn() : led3.turnOff();
 
     // Plant Node Portion
+    Serial.println("======================GARDEN PORTION !!!======================");
+
     int waterLevel = water.readInput();
     float moisture = 100 * float(waterLevel)/4095;
     (moisture <= WATER_THRESHOLD) ? pump.turnOn() : pump.turnOff();
-	Serial.printf("Moisture Level: %d\n", moisture);
+    Serial.printf("Moisture Level (Raw): %d\n", waterLevel);
+	Serial.printf("Moisture Level: %f\n", moisture);
 
 	JsonDocument docPlant;
 	docPlant["moisture"] = moisture;

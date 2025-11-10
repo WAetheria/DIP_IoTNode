@@ -41,7 +41,9 @@ void setup(){
     // Posts the JSON payload
     HTTPClient http;
     http.begin(serverURL);
-    String response = postJSON(payload, http);
+
+    int httpResponseCode = http.POST(payload);
+    String response = http.getString();
 
     Serial.print("HTTP Response: ");
     Serial.println(response);
@@ -59,8 +61,10 @@ void setup(){
     Serial.println(refreshToken);
 
     // Save the refresh token to permanent memory
-    saveToken(JWT_KEYNAME, jwt);
-    saveToken(REFRESHTOKEN_KEYNAME, refreshToken);
+    if (httpResponseCode == 201){
+        saveToken(JWT_KEYNAME, jwt);
+        saveToken(REFRESHTOKEN_KEYNAME, refreshToken);
+    }
 
     String savedJWT = loadToken(JWT_KEYNAME);
     Serial.print("Saved JWT: ");
