@@ -11,7 +11,7 @@
 
 camera_fb_t fb;
 
-const char* serverURL = "http://10.139.217.226:8000/upload";
+const char* serverURL = "http://<address>/upload";
 
 void setup(){
 	Serial.begin(115200);

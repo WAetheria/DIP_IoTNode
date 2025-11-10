@@ -26,7 +26,7 @@ Device led3 = Device(LED3_PIN, DeviceMode::DIGITAL_OUTPUT);
 #define WATER_SENSOR    36 
 #define WATER_PUMP      26
 
-#define WATER_THRESHOLD 1000
+#define WATER_THRESHOLD 20
 
 Device water = Device(WATER_SENSOR, DeviceMode::ANALOG_INPUT);
 Device pump  = Device(WATER_PUMP  , DeviceMode::DIGITAL_OUTPUT);
@@ -80,11 +80,12 @@ void loop(){
 
     // Plant Node Portion
     int waterLevel = water.readInput();
-    (waterLevel <= WATER_THRESHOLD) ? pump.turnOn() : pump.turnOff();
-	Serial.printf("Water Level: %d\n", waterLevel);
+    float moisture = 100 * float(waterLevel)/4095;
+    (moisture <= WATER_THRESHOLD) ? pump.turnOn() : pump.turnOff();
+	Serial.printf("Moisture Level: %d\n", moisture);
 
 	JsonDocument docPlant;
-	docPlant["Water Level"] = waterLevel;
+	docPlant["moisture"] = moisture;
 	char payload[256];
 	serializeJson(docPlant, payload);
 
